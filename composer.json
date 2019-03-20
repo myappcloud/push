@@ -1,0 +1,23 @@
+{
+    "name": "mingyuanyun/push",
+    "description": "App push for mingyuanyun",
+    "type": "library",
+    "keywords": ["push", "mingyuanyun", "android push"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zengbin",
+            "email": "zengb02@mingyuanyun.com"
+        }
+    ],
+    "version": "1.0.0",
+    "require": {
+        "guzzlehttp/guzzle": "^6.2",
+        "php": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "MingYuanYun\\Push\\": "src/"
+        }
+    }
+}
