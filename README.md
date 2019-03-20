@@ -20,7 +20,7 @@
 
 ## 安装
 
-执行`composer require mingyuanyun/push`完成安装
+执行`composer require yunchuang/push`完成安装
 
 
 ---
