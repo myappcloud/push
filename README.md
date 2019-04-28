@@ -10,13 +10,16 @@
 - [Oppo推送](http://storepic.oppomobile.com/openplat/resource/201812/03/OPPO推送平台服务端API-V1.3.pdf)
 - [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20181123/20181123145345246.pdf)
 - [iOS APNs推送](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1)
+- [iOS APNs(base on token)推送](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns)
 
 
 ---
 
 ## 环境需求
 
-- PHP >= 5.6
+- PHP >= 5.4
+- guzzlehttp/guzzle >= 6.2
+- yunchuang/php-jwt >= 1.0
 
 ## 安装
 
@@ -59,8 +62,15 @@ $config = [
     ],
     'ios' => [
         'isSandBox' => true, // 是否沙盒环境（测试包）
-        'certPath' => '', // pem格式推送证书本地路径
+        'certPath' => '', // pem格式推送证书本地绝对路径
         'password' => '123', // 推送证书密码
+    ],
+    'ios-token' => [
+        'isSandBox' => true,
+        'teamId' => 'D4GSYVE6CN', // 开发者帐号teamId
+        'keyId' => '99BYW4U4SZ', // token认证keyId
+        'secretFile' => 'xxx.p8', // token认证密钥文件本地绝对路径
+        'bundleId' => 'com.mysoft.mdev' // 应用ID
     ]
 ];
 
@@ -79,7 +89,8 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 - meizu 魅族
 - oppo Oppo
 - vivo Vivo
-- ios 苹果
+- ios 苹果(基于推送证书认证)
+- ios-token 苹果(基于token认证)
 
 ## 设备token
 
@@ -96,9 +107,10 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 |:---:|:---:|:---:|
 | businessId | string | 业务ID |
 | title | string | 标题，建议不超过10个汉字 |
+| subTitle | string | 副标题，建议不超过10个汉字 |
 | content | string | 内容，建议不超过20个汉字 |
-| extra | array | 自定义数据 |
-| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果不支持回执* |
+| extra | array | 自定义数据，只支持一维 |
+| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-token通道支持回执* |
 | callbackParam | string | 自定义回执参数，最大50个字节 |
 
 示例
@@ -169,8 +181,18 @@ print $push->pushNotice(
     $message
 );
 
-// 苹果推送
+// 苹果基于证书推送
 $push->setPusher('ios');
+print $push->pushNotice(
+    [
+        '7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d',
+        '720772a4df1938b14d2b732ee62ce4e157577f8453d6021f81156aaeca7032ae',
+    ],
+    $message
+);
+
+// 苹果基于token推送
+$push->setPusher('ios-token');
 print $push->pushNotice(
     [
         '7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d',
@@ -183,14 +205,14 @@ print $push->pushNotice(
 
 ## 认证
 
-目前`华为`、`Oppo`、`Vivo`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token。
+目前`华为`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token。
 
 此方法返回格式如下：
 
 ```php
 [
     'token' => 认证token,
-    'expires' => 有效期，单位为秒
+    'expires' => 有效时间，单位为秒
 ];
 
 ```
@@ -241,3 +263,75 @@ print $push->pushNotice(
 ```
 
 ## 各通道配置参照[$config](#使用)
+
+---
+
+## 各通道回执示例
+
+- ios-token
+```
+# 成功
+{
+    "businessId": "5cc55570a9faf",
+    "deviceToken": "7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d",
+    "taskId": "3FC1E078-93CA-33BA-EC52-8E8A70AA0EB1",
+    "status": "success"
+}
+
+# 失败
+{
+    "businessId": "5cc550a6d05ad",
+    "deviceToken": "7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d",
+    "reason": "403 Forbidden for ExpiredProviderToken",
+    "status": "fail"
+}
+```
+- huawei
+```
+{
+    "statuses": [
+        {
+            "timestamp": 1552459811754,
+            "token": "0864113036098917300002377300CN01",
+            "appid": "100405075",
+            "biTag": "",
+            "status": 0,
+            "requestId": "155245981150032647501"
+        }
+    ]
+}
+```
+- meizu
+```
+{
+    "cb": "{\"NS20190313171303747_0_11579902_1_3-1\":{\"param\":\"\",\"type\":1,\"targets\":[\"S5Q4b726f7b466c797c584d54000503555c427160754b\"]}}",
+    "access_token": "c68b05216e54409d95573912fad9c0de"
+}
+```
+- xiaomi
+```
+{
+    "data": "{\"scm527795524699919378t\":{\"barStatus\":\"Enable\",\"type\":1,\"targets\":\"0VcFXBPNTLifGLIYK+GdDAiOFJQ+uWAzkfs7QYtfszBgqFV720C8zli7mce1mHj6\",\"timestamp\":1552470320982},\"scm52278552470202304Mq\":{\"barStatus\":\"Enable\",\"type\":1,\"targets\":\"0VcFXBPNTLifGLIYK+GdDAiOFJQ+uWAzkfs7QYtfszBgqFV720C8zli7mce1mHj6\",\"timestamp\":1552470321182}}"
+}
+```
+- vivo
+```
+{
+    "555758542050050048": {
+        "param": null,
+        "targets": "15513410784181118114099"
+    }
+}
+```
+- oppo
+```
+[
+    {
+        "registrationIds": "CN_768799ad17f2b564707db038dabb14b6",
+        "messageId": "5c89f5d30980ff58c6ff9914",
+        "taskId": "0000",
+        "eventType": "push_arrive",
+        "appId": "3000604"
+    }
+]
+```

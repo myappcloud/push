@@ -87,6 +87,11 @@ class Push
         if (class_exists($name)) {
             return $name;
         }
+        if ('apple' == strtolower($name)) {
+            $name = 'ios';
+        } elseif ('apple-token' == strtolower($name)) {
+            $name = 'ios-token';
+        }
 
         $name = ucfirst(str_replace(['-', '_', ''], '', $name));
 

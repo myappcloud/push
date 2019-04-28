@@ -10,6 +10,8 @@ class Message implements MessageInterface
 {
     protected $title;
 
+    protected $subTitle;
+
     protected $content;
 
     protected $extra;

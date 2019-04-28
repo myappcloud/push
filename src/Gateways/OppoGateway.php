@@ -62,7 +62,7 @@ class OppoGateway extends Gateway
         }
         $messageData = [
             'title' => $message->title,
-            'sub_title' => mb_substr($message->title, 0, 10),
+            'sub_title' => $message->subTitle ? $message->subTitle : '',
             'content' => $message->content,
             'click_action_type' => 5,
             'click_action_url' => $this->generateIntent($this->config->get('appPkgName'), $message->extra)
