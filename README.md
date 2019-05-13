@@ -7,8 +7,8 @@
 - [华为推送](https://developer.huawei.com/consumer/cn/service/hms/catalog/huaweipush_agent.html?page=hmssdk_huaweipush_api_reference_agent_s2)
 - [小米推送](https://dev.mi.com/console/doc/detail?pId=1163)
 - [魅族推送](https://github.com/MEIZUPUSH/PushAPI#api_standard_index)
-- [Oppo推送](http://storepic.oppomobile.com/openplat/resource/201812/03/OPPO推送平台服务端API-V1.3.pdf)
-- [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20181123/20181123145345246.pdf)
+- [Oppo推送](http://storepic.oppomobile.com/openplat/resource/201904/03/OPPO推送平台服务端API-V1.6.pdf)
+- [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20190418/0d23g6/PUSH-UPS-API接口文档%20-%202.4.3.1版.pdf)
 - [iOS APNs推送](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1)
 - [iOS APNs(base on token)推送](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns)
 
@@ -18,7 +18,7 @@
 ## 环境需求
 
 - PHP >= 5.4
-- guzzlehttp/guzzle >= 6.2
+- guzzlehttp/guzzle >= 6.0
 - yunchuang/php-jwt >= 1.0
 
 ## 安装

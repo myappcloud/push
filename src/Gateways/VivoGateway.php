@@ -12,7 +12,7 @@ class VivoGateway extends Gateway
 {
     use HasHttpRequest;
 
-    // https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20181123/20181123145345246.pdf
+    // https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20190418/0d23g6/PUSH-UPS-API接口文档%20-%202.4.3.1版.pdf
 
     const BASE_URL = 'https://api-push.vivo.com.cn';
 
@@ -107,8 +107,9 @@ class VivoGateway extends Gateway
     protected function pushMultiNotify($to, MessageInterface $message, array $options = [])
     {
         $data = [
-            'regIds' => $to,
+            'regIds' => $this->formatTo($to),
             'taskId' => $this->saveMessageToCloud($message),
+            'requestId' => $message->businessId
         ];
         $result = $this->postJson(
             sprintf('%s/%s', self::BASE_URL, self::MULTI_PUSH_METHOD),
@@ -171,7 +172,7 @@ class VivoGateway extends Gateway
         } else {
             $this->checkMaxToken($to);
         }
-        return implode(';', $to);
+        return $to;
     }
 
     protected function assertFailure($result, $message)

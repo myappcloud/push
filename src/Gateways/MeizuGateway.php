@@ -55,7 +55,7 @@ class MeizuGateway extends Gateway
             'pushIds' => $this->formatTo($to),
             'messageJson' => json_encode($payload),
         ];
-        $data['sign'] = $this->generateSign($data, $this->config->get('appSecret'));
+        $data['sign'] = $this->generateSign($data);
 
         $result = $this->post(self::PUSH_URL, $data, $this->getHeaders());
         $this->assertFailure($result, '魅族推送失败');
