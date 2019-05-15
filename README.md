@@ -335,3 +335,7 @@ print $push->pushNotice(
     }
 ]
 ```
+
+---
+
+## [推送限额说明](/docs/push_limit.md)
