@@ -339,3 +339,6 @@ print $push->pushNotice(
 ---
 
 ## [推送限额说明](/docs/push_limit.md)
+
+## 注意
+- 各厂商设备token长度不一致，目前识别出华为最长为130个字符
