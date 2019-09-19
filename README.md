@@ -65,7 +65,7 @@ $config = [
         'certPath' => '', // pem格式推送证书本地绝对路径
         'password' => '123', // 推送证书密码
     ],
-    'ios-token' => [
+    'ios-Token' => [
         'isSandBox' => true,
         'teamId' => 'D4GSYVE6CN', // 开发者帐号teamId
         'keyId' => '99BYW4U4SZ', // token认证keyId
@@ -90,7 +90,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 - oppo Oppo
 - vivo Vivo
 - ios 苹果(基于推送证书认证)
-- ios-token 苹果(基于token认证)
+- ios-Token 苹果(基于token认证)
 
 ## 设备token
 
@@ -110,7 +110,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 | subTitle | string | 副标题，建议不超过10个汉字 |
 | content | string | 内容，建议不超过20个汉字 |
 | extra | array | 自定义数据，只支持一维 |
-| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-token通道支持回执* |
+| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-Token通道支持回执* |
 | callbackParam | string | 自定义回执参数，最大50个字节 |
 
 示例
@@ -192,7 +192,7 @@ print $push->pushNotice(
 );
 
 // 苹果基于token推送
-$push->setPusher('ios-token');
+$push->setPusher('ios-Token');
 print $push->pushNotice(
     [
         '7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d',
@@ -205,7 +205,7 @@ print $push->pushNotice(
 
 ## 认证
 
-目前`华为`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token。
+目前`华为`、`Oppo`、`Vivo`、`ios-Token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token。
 
 此方法返回格式如下：
 
@@ -268,7 +268,7 @@ print $push->pushNotice(
 
 ## 各通道回执示例
 
-- ios-token
+- ios-Token
 ```
 # 成功
 {
