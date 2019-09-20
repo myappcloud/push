@@ -92,10 +92,10 @@ class Push
         } elseif ('apple-token' == strtolower($name)) {
             $name = 'ios-token';
         }
+        $nameArr = preg_split("/(\-|_| )/", $name);
+        $gatewary = implode('', array_map('ucfirst', $nameArr));
 
-        $name = ucfirst(str_replace(['-', '_', ''], '', $name));
-
-        return __NAMESPACE__."\\Gateways\\{$name}Gateway";
+        return __NAMESPACE__."\\Gateways\\{$gateway}Gateway";
     }
 
     protected function makeGateway($gateway)

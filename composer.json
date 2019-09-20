@@ -12,7 +12,7 @@
     ],
     "version": "1.1.1",
     "require": {
-        "guzzlehttp/guzzle": "^6.0",
+        "guzzlehttp/guzzle": "^5.3",
         "php": ">=5.4",
         "yunchuang/php-jwt": "^1.0"
     },
