@@ -93,7 +93,7 @@ class Push
             $name = 'ios-token';
         }
         $nameArr = preg_split("/(\-|_| )/", $name);
-        $gatewary = implode('', array_map('ucfirst', $nameArr));
+        $gateway = implode('', array_map('ucfirst', $nameArr));
 
         return __NAMESPACE__."\\Gateways\\{$gateway}Gateway";
     }
