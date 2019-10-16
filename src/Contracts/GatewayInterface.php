@@ -4,6 +4,8 @@
 namespace MingYuanYun\Push\Contracts;
 
 
+use MingYuanYun\Push\AbstractMessage;
+
 
 interface GatewayInterface
 {
@@ -11,5 +13,5 @@ interface GatewayInterface
 
     public function getAuthToken();
 
-    public function pushNotice($to, MessageInterface $message, array $options = []);
+    public function pushNotice($to, AbstractMessage $message, array $options = []);
 }

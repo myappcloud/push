@@ -4,7 +4,7 @@
 namespace MingYuanYun\Push\Gateways;
 
 
-use MingYuanYun\Push\Contracts\MessageInterface;
+use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
 use MingYuanYun\Push\Support\ApnsPush;
@@ -18,7 +18,7 @@ class IosGateway extends Gateway
         return null;
     }
 
-    public function pushNotice($to, MessageInterface $message, array $options = [])
+    public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
         $to = $this->formatTo($to);
         if (!$to) {

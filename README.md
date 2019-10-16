@@ -221,6 +221,10 @@ print $push->pushNotice(
 
 缓存的认证token请以[附加信息](#附加信息)传入。
 
+## 推送角标
+
+目前仅`ios` `ios-token` `华为`支持推送角标
+
 
 ## 返回值
 
@@ -230,6 +234,7 @@ print $push->pushNotice(
 
 - `MingYuanYun\Push\Exceptions\GatewayErrorException`
 - `MingYuanYun\Push\Exceptions\InvalidArgumentException`
+- `MingYuanYun\Push\Exceptions\ResponseException`
 
 也可捕获上述异常的父类`MingYuanYun\Push\Exceptions\Exception`
 
@@ -343,4 +348,3 @@ print $push->pushNotice(
 ## 注意
 - 各厂商设备token长度不一致，目前识别出华为最长为130个字符
 - 如果项目中使用了`firebase/php-jwt`，需要将此库移除。由于此库不支持ios-token要求的`ES256`算法，故从其PR中拉取出一个新的库`yunchuang/php-jwt`，对应官方的`5.0.0`版本，用法与官方一致
-- 

@@ -5,6 +5,7 @@ namespace MingYuanYun\Push\Traits;
 
 
 use GuzzleHttp\Client;
+use MingYuanYun\Push\Exceptions\ResponseException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -111,19 +112,22 @@ trait HasHttpRequest
      *
      * @param \Psr\Http\Message\ResponseInterface $response
      *
-     * @return ResponseInterface|array|string
+     * @return ResponseInterface|array
+     *
+     * @throws ResponseException
      */
     protected function unwrapResponse(ResponseInterface $response)
     {
+        $statusCode = $response->getStatusCode();
+        if ($statusCode != 200) {
+            throw new ResponseException('调用厂商API状态异常', $statusCode);
+        }
         $contentType = $response->getHeaderLine('Content-Type');
         $contents = $response->getBody()->getContents();
 
-        if (false !== stripos($contentType, 'json') || stripos($contentType, 'javascript')) {
-            return json_decode($contents, true);
-        } elseif (false !== stripos($contentType, 'xml')) {
-            return json_decode(json_encode(simplexml_load_string($contents)), true);
+        if (stripos($contentType, 'xml') !== false) {
+            return (array) json_decode(json_encode(simplexml_load_string($contents)), true);
         }
-
-        return $contents;
+        return (array) json_decode($contents, true);
     }
 }

@@ -5,7 +5,6 @@ namespace MingYuanYun\Push;
 
 use Closure;
 use MingYuanYun\Push\Contracts\GatewayInterface;
-use MingYuanYun\Push\Contracts\MessageInterface;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
 use MingYuanYun\Push\Support\Config;
@@ -52,7 +51,7 @@ class Push
 
     protected function formatMessage($message)
     {
-        if (!($message instanceof MessageInterface)) {
+        if (!($message instanceof AbstractMessage)) {
             if (!is_array($message)) {
                 throw new InvalidArgumentException('无效的推送内容格式');
             }

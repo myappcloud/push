@@ -4,27 +4,9 @@
 namespace mingyuanyun\push;
 
 
-use MingYuanYun\Push\Contracts\MessageInterface;
 
-class Message implements MessageInterface
+class Message extends AbstractMessage
 {
-    protected $title;
-
-    protected $subTitle;
-
-    protected $content;
-
-    protected $extra;
-
-    protected $businessId;
-
-    protected $badge;
-
-    protected $callback;
-
-    protected $callbackParam;
-
-
     /**
      * Message constructor.
      *
@@ -49,5 +31,6 @@ class Message implements MessageInterface
         if (property_exists($this, $property)) {
             return $this->$property;
         }
+        return null;
     }
 }

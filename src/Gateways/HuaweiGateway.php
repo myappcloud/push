@@ -3,7 +3,7 @@
 namespace MingYuanYun\Push\Gateways;
 
 
-use MingYuanYun\Push\Contracts\MessageInterface;
+use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Traits\HasHttpRequest;
 
@@ -30,7 +30,7 @@ class HuaweiGateway extends Gateway
     ];
 
 
-    public function pushNotice($to, MessageInterface $message, array $options = [])
+    public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
         if (isset($options['token'])) {
             $token = $options['token'];
@@ -54,6 +54,9 @@ class HuaweiGateway extends Gateway
                             'intent' => $this->generateIntent($this->config->get('appPkgName'), $message->extra)
                         ]
                     ]
+                ],
+                'ext' => [
+                    'badgeAddNum' => $message->badge ? strval($message->badge) : '0',
                 ]
             ]
         ];
@@ -65,16 +68,15 @@ class HuaweiGateway extends Gateway
             'payload' => json_encode($payload)
         ];
         $result = $this->post($this->buildPushUrl(), $data, $this->getHeaders());
-        $resultJson = (array) json_decode($result, true);
-        if (!isset($resultJson['code']) || $resultJson['code'] != self::OK_CODE) {
+        if (!isset($result['code']) || $result['code'] != self::OK_CODE) {
             throw new GatewayErrorException(sprintf(
                 '华为推送失败 > [%s] %s %s',
-                isset($resultJson['code']) ? $resultJson['code'] : '-99',
-                isset($resultJson['error']) ? $resultJson['error'] : '',
-                isset($resultJson['error_description']) ? $resultJson['error_description'] : '未知异常'
+                isset($result['code']) ? $result['code'] : '-99',
+                isset($result['error']) ? $result['error'] : '',
+                isset($result['error_description']) ? $result['error_description'] : '未知异常'
             ));
         }
-        return $resultJson['requestId'];
+        return $result['requestId'];
     }
 
     public function getAuthToken()
@@ -86,19 +88,17 @@ class HuaweiGateway extends Gateway
         ];
         $result = $this->post(self::AUTH_URL, $data, $this->getHeaders());
 
-        $resultJson = (array) json_decode($result, true);
-
-        if (!isset($resultJson['access_token'])) {
+        if (!isset($result['access_token'])) {
             throw new GatewayErrorException(sprintf(
                 '获取华为推送token失败 > [%s] %s',
-                isset($resultJson['error']) ? $resultJson['error'] : '-99',
-                isset($resultJson['error_description']) ? $resultJson['error_description'] : '未知异常'
+                isset($result['error']) ? $result['error'] : '-99',
+                isset($result['error_description']) ? $result['error_description'] : '未知异常'
             ));
         }
 
         return [
-            'token' => $resultJson['access_token'],
-            'expires' => $resultJson['expires_in']
+            'token' => $result['access_token'],
+            'expires' => $result['expires_in']
         ];
     }
 

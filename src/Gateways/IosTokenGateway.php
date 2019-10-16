@@ -7,7 +7,7 @@ use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
-use MingYuanYun\Push\Contracts\MessageInterface;
+use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
 
 class IosTokenGateway extends Gateway
@@ -42,10 +42,11 @@ class IosTokenGateway extends Gateway
             throw new InvalidArgumentException('无效的推送密钥证书地址 > ' . $secretFile);
         }
         $secret = file_get_contents($secretFile);
+
         return JWT::encode($payload, $secret, static::ALGORITHM, null, $header);
     }
 
-    public function pushNotice($to, MessageInterface $message, array $options = [])
+    public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
         $to = $this->formatTo($to);
         if (!$to) {
@@ -77,7 +78,7 @@ class IosTokenGateway extends Gateway
         $this->_push($to, $payload, $header, $callback);
     }
 
-    protected function createPayload(MessageInterface $message)
+    protected function createPayload(AbstractMessage $message)
     {
         $payload = [
             'aps' => [
@@ -161,7 +162,6 @@ class IosTokenGateway extends Gateway
     protected function notifyCallback($callback, $data, $payload)
     {
         if (!$callback) {
-            var_dump($data);
             return;
         }
         if (isset($callback['params'])) {

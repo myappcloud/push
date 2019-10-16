@@ -4,7 +4,7 @@
 namespace MingYuanYun\Push\Gateways;
 
 
-use MingYuanYun\Push\Contracts\MessageInterface;
+use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Traits\HasHttpRequest;
 
@@ -55,7 +55,7 @@ class VivoGateway extends Gateway
         ];
     }
 
-    public function pushNotice($to, MessageInterface $message, array $options = [])
+    public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
         if (isset($options['token'])) {
             $token = $options['token'];
@@ -75,7 +75,7 @@ class VivoGateway extends Gateway
         }
     }
 
-    protected function pushSingleNotify($to, MessageInterface $message, array $options = [])
+    protected function pushSingleNotify($to, AbstractMessage $message, array $options = [])
     {
         $data = [
             'regId' => $to,
@@ -104,7 +104,7 @@ class VivoGateway extends Gateway
         return $result['taskId'];
     }
 
-    protected function pushMultiNotify($to, MessageInterface $message, array $options = [])
+    protected function pushMultiNotify($to, AbstractMessage $message, array $options = [])
     {
         $data = [
             'regIds' => $this->formatTo($to),
@@ -121,7 +121,7 @@ class VivoGateway extends Gateway
         return $data['taskId'];
     }
 
-    protected function saveMessageToCloud(MessageInterface $message, array $options = [])
+    protected function saveMessageToCloud(AbstractMessage $message, array $options = [])
     {
         $data = [
             'title' => $message->title,
