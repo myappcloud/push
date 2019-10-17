@@ -1,7 +1,7 @@
 <?php
 
 
-namespace mingyuanyun\push;
+namespace MingYuanYun\Push;
 
 
 

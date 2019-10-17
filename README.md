@@ -18,7 +18,7 @@
 ## 环境需求
 
 - PHP >= 5.4
-- guzzlehttp/guzzle >= 5.3
+- guzzlehttp/guzzle >= 6.0.0
 - yunchuang/php-jwt >= 1.0
 
 ## 安装
