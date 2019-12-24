@@ -57,7 +57,7 @@ class OppoGateway extends Gateway
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
-        if (isset($options['token'])) {
+        if (! empty($options['token'])) {
             $token = $options['token'];
             unset($options['token']);
         } else {
@@ -69,8 +69,10 @@ class OppoGateway extends Gateway
             'sub_title' => $message->subTitle ? $message->subTitle : '',
             'content' => $message->content,
             'click_action_type' => 5,
-            'click_action_url' => $this->generateIntent($this->config->get('appPkgName'), $message->extra)
+            'click_action_url' => $this->generateIntent($this->config->get('appPkgName'), $message->extra),
+            'channel_id' => 'default_notification'
         ];
+        $message->businessId && $messageData['app_message_id'] = $message->businessId;
         if ($message->callback) {
             $messageData['call_back_url'] = $message->callback;
             if ($message->callbackParam) {

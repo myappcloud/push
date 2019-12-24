@@ -7,8 +7,8 @@
 - [华为推送](https://developer.huawei.com/consumer/cn/service/hms/catalog/huaweipush_agent.html?page=hmssdk_huaweipush_api_reference_agent_s2)
 - [小米推送](https://dev.mi.com/console/doc/detail?pId=1163)
 - [魅族推送](https://github.com/MEIZUPUSH/PushAPI#api_standard_index)
-- [Oppo推送](http://storepic.oppomobile.com/openplat/resource/201904/03/OPPO推送平台服务端API-V1.6.pdf)
-- [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20190418/0d23g6/PUSH-UPS-API接口文档%20-%202.4.3.1版.pdf)
+- [Oppo推送](https://storepic.oppomobile.com/openplat/resource/201910/18/OPPO推送平台服务端API-V1.9.3.pdf)
+- [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20191210/we5XL6/PUSH-UPS-API接口文档%20-%202.7.0版.pdf)
 - [iOS APNs推送](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1)
 - [iOS APNs(base on token)推送](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns)
 
@@ -33,6 +33,11 @@
 ```php
 use MingYuanYun\Push\Push;
 
+$iosCertContent =<<<EOF
+-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----
+EOF;
 
 $config = [
     'huawei' => [
@@ -69,6 +74,7 @@ $config = [
         'isSandBox' => true,
         'teamId' => 'D4GSYVE6CN', // 开发者帐号teamId
         'keyId' => '99BYW4U4SZ', // token认证keyId
+        'secretContent' => $iosCertContent, // 密钥内容，有值时忽略secretFile
         'secretFile' => 'xxx.p8', // token认证密钥文件本地绝对路径
         'bundleId' => 'com.mysoft.mdev' // 应用ID
     ]
@@ -105,13 +111,14 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 
 |参数|类型|说明
 |:---:|:---:|:---:|
-| businessId | string | 业务ID |
+| businessId | string | 业务ID，相同业务ID只推送一次 |
 | title | string | 标题，建议不超过10个汉字 |
 | subTitle | string | 副标题，建议不超过10个汉字 |
 | content | string | 内容，建议不超过20个汉字 |
 | extra | array | 自定义数据，只支持一维 |
 | callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-token通道支持回执* |
 | callbackParam | string | 自定义回执参数，最大50个字节 |
+| notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 |
 
 示例
 
@@ -128,6 +135,11 @@ $message = [
 ```
 
 ## 附加信息
+
+|参数|类型|说明
+|:---:|:---:|:---:|
+| token | string | 认证token |
+| push | MingYuanYun\Push\Support\ApnsPush | iOS证书推送实例 |
 
 当前仅支持附加认证token
 
@@ -183,12 +195,25 @@ print $push->pushNotice(
 
 // 苹果基于证书推送
 $push->setPusher('ios');
+
+$apnsPush = new ApnsPush();
+$isSandBox = true;
+$certPath = '/cert/path';
+$password = 'cert_pwd';
+$apnsPush->setIsSandBox($isSandBox)
+    ->setLocalCert($certPath)
+    ->setPassphrase($password);
+$options = [
+    'push' => $apnsPush
+];
+
 print $push->pushNotice(
     [
         '7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d',
         '720772a4df1938b14d2b732ee62ce4e157577f8453d6021f81156aaeca7032ae',
     ],
-    $message
+    $message,
+    $options
 );
 
 // 苹果基于token推送
@@ -205,7 +230,7 @@ print $push->pushNotice(
 
 ## 认证
 
-目前`华为`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token。
+目前`华为`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token，过期时间较返回的有效时间短，比如2小时。
 
 此方法返回格式如下：
 
@@ -344,6 +369,14 @@ print $push->pushNotice(
 ---
 
 ## [推送限额说明](/docs/push_limit.md)
+
+---
+
+## Oppo、Vivo推送服务开通答疑
+![oppo](/docs/oppo_push.png)
+![vivo](/docs/vivo_push.png)
+
+---
 
 ## 注意
 - 各厂商设备token长度不一致，目前识别出华为最长为130个字符

@@ -22,4 +22,6 @@ abstract class AbstractMessage implements MessageInterface
     public $callback;
 
     public $callbackParam;
+
+    public $notifyId;
 }

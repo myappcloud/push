@@ -35,8 +35,11 @@ class XiaomiGateway extends Gateway
             'description' => $message->content,
             'extra.notify_effect' => '2',
             'extra.intent_uri' => $this->generateIntent($this->config->get('appPkgName'), $message->extra),
-            'registration_id' => $this->formatTo($to)
+            'registration_id' => $this->formatTo($to),
         ];
+        $message->notifyId && $data['extra.jobkey'] = $message->notifyId;
+        $message->businessId && $data['notify_id'] = $message->businessId;
+        
         if ($message->callback) {
             $data['extra.callback'] = $message->callback;
             if ($message->callbackParam) {

@@ -37,13 +37,16 @@ class IosTokenGateway extends Gateway
             'alg' => static::ALGORITHM,
             'kid' => $this->config->get('keyId')
         ];
-        $secretFile = $this->config->get('secretFile');
-        if (!file_exists($secretFile)) {
-            throw new InvalidArgumentException('无效的推送密钥证书地址 > ' . $secretFile);
+        $secretContent = $this->config->get('secretContent');
+        if (! $secretContent) {
+            $secretFile = $this->config->get('secretFile');
+            if (!file_exists($secretFile)) {
+                throw new InvalidArgumentException('无效的推送密钥证书地址 > ' . $secretFile);
+            }
+            $secretContent = file_get_contents($secretFile);
         }
-        $secret = file_get_contents($secretFile);
 
-        return JWT::encode($payload, $secret, static::ALGORITHM, null, $header);
+        return JWT::encode($payload, $secretContent, static::ALGORITHM, null, $header);
     }
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])

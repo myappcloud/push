@@ -12,7 +12,7 @@ class VivoGateway extends Gateway
 {
     use HasHttpRequest;
 
-    // https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20190418/0d23g6/PUSH-UPS-API接口文档%20-%202.4.3.1版.pdf
+    // https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20191210/we5XL6/PUSH-UPS-API接口文档%20-%202.7.0版.pdf
 
     const BASE_URL = 'https://api-push.vivo.com.cn';
 
@@ -57,7 +57,7 @@ class VivoGateway extends Gateway
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
-        if (isset($options['token'])) {
+        if (! empty($options['token'])) {
             $token = $options['token'];
             unset($options['token']);
         } else {

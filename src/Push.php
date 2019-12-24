@@ -7,6 +7,7 @@ use Closure;
 use MingYuanYun\Push\Contracts\GatewayInterface;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
+use MingYuanYun\Push\Gateways\Gateway;
 use MingYuanYun\Push\Support\Config;
 
 class Push
@@ -15,6 +16,9 @@ class Push
 
     protected $gatewayConfig;
 
+    /**
+     * @var Gateway
+     */
     protected $gateway;
 
     protected $customGateways = [];
@@ -32,12 +36,13 @@ class Push
 
     public function getAuthToken()
     {
-        return $this->gateway->getAuthToken($this->gatewayConfig);
+        return $this->gateway->getAuthToken();
     }
 
     public function pushNotice($to, $message, array $options = [])
     {
         $message = $this->formatMessage($message);
+        $options = $this->checkOptions($options);
 
         return $this->gateway->pushNotice($to, $message, $options);
     }
@@ -104,5 +109,10 @@ class Push
         }
 
         return new $gateway($this->gatewayConfig);
+    }
+
+    protected function checkOptions(array $options)
+    {
+        return array_map('trim', $options);
     }
 }

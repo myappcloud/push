@@ -128,6 +128,9 @@ trait HasHttpRequest
         if (stripos($contentType, 'xml') !== false) {
             return (array) json_decode(json_encode(simplexml_load_string($contents)), true);
         }
-        return (array) json_decode($contents, true);
+        if (is_string($contents)) {
+            $contents = (array) json_decode($contents, true);
+        }
+        return $contents;
     }
 }

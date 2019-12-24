@@ -13,9 +13,37 @@ class IosGateway extends Gateway
 {
     protected $maxTokens = 100;
 
+    /**
+     * @var ApnsPush $pusher
+     */
+    protected $pusher = null;
+
     public function getAuthToken()
     {
         return null;
+    }
+
+    public function setPusher(ApnsPush $pusher)
+    {
+        $this->pusher = $pusher;
+    }
+
+    private function checkPusher()
+    {
+        if (! isset($this->pusher)) {
+            $this->pusher = new ApnsPush();
+            $isSandBox = $this->config->get('isSandBox');
+            $certPath = $this->config->get('certPath');
+            if (!file_exists($certPath)) {
+                throw new InvalidArgumentException('无效的推送证书地址 > ' . $certPath);
+            }
+
+            $this->pusher->setIsSandBox($isSandBox)
+                ->setLocalCert($certPath);
+            if ($password = $this->config->get('password')) {
+                $this->pusher->setPassphrase($password);
+            }
+        }
     }
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
@@ -24,21 +52,14 @@ class IosGateway extends Gateway
         if (!$to) {
             throw new InvalidArgumentException('无有效的设备token');
         }
-        $push = new ApnsPush();
-        $isSandBox = $this->config->get('isSandBox');
-        $certPath = $this->config->get('certPath');
-        if (!file_exists($certPath)) {
-            throw new InvalidArgumentException('无效的推送证书地址 > ' . $certPath);
+        if (! empty($options['push']) && $options['push'] instanceof ApnsPush) {
+            $this->setPusher($options['push']);
         }
 
-        $push->setIsSandBox($isSandBox)
-            ->setLocalCert($certPath);
-        if ($password = $this->config->get('password')) {
-            $push->setPassphrase($password);
-        }
-        $push->connect();
+        $this->checkPusher();
+        $this->pusher->connect();
 
-        if ($push->isSuccess()) {
+        if ($this->pusher->isSuccess()) {
             // http://docs.getui.com/getui/server/rest/template/
             // https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
             $messageData = [
@@ -46,14 +67,19 @@ class IosGateway extends Gateway
                 'body' => $message->content,
                 'apns-collapse-id' => $message->businessId
             ];
-            $push->setDeviceToken($to)
+            $this->pusher->setDeviceToken($to)
                 ->push($messageData, $message->badge, 'default', $message->extra);
+            return;
         }
-        $error = $push->error();
-        $push->disconnect();
+        $error = $this->pusher->error();
         if ($error) {
             throw new GatewayErrorException($error);
         }
+    }
+
+    public function __destruct()
+    {
+        $this->pusher && $this->pusher->disconnect();
     }
 
     protected function formatTo($to)

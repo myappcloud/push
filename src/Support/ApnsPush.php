@@ -18,43 +18,52 @@ class ApnsPush
     //是否沙盒模式
     private $isSandBox = false;
 
-    function getDeviceToken() {
+    public function getDeviceToken()
+    {
         return $this->deviceToken;
     }
 
-    function getLocalCert() {
+    public function getLocalCert()
+    {
         return $this->localCert;
     }
 
-    function getPassphrase() {
+    public function getPassphrase()
+    {
         return $this->passphrase;
     }
 
-    function getIsSandBox() {
+    public function getIsSandBox()
+    {
         return $this->isSandBox;
     }
 
-    function setDeviceToken($deviceToken) {
+    public function setDeviceToken($deviceToken)
+    {
         $this->deviceToken = $deviceToken;
         return $this;
     }
 
-    function setLocalCert($localCert) {
+    public function setLocalCert($localCert)
+    {
         $this->localCert = $localCert;
         return $this;
     }
 
-    function setPassphrase($passphrase) {
+    public function setPassphrase($passphrase)
+    {
         $this->passphrase = $passphrase;
         return $this;
     }
 
-    function setIsSandBox($isSandBox) {
+    public function setIsSandBox($isSandBox)
+    {
         $this->isSandBox = $isSandBox;
         return $this;
     }
 
-    public function connect() {
+    public function connect()
+    {
         $this->error = array();
         $ctx = stream_context_create();
         stream_context_set_option($ctx, 'ssl', 'local_cert', $this->localCert);
@@ -74,15 +83,18 @@ class ApnsPush
         return $this;
     }
 
-    public function isSuccess() {
+    public function isSuccess()
+    {
         return empty($this->error);
     }
 
-    public function error() {
+    public function error()
+    {
         return implode(PHP_EOL, $this->error);
     }
 
-    private function createPayload($message, $badge, $sound, $extras = []) {
+    private function createPayload($message, $badge, $sound, $extras = [])
+    {
         $body['aps'] = array(
             'alert' => $message,
             'sound' => $sound,
@@ -96,7 +108,8 @@ class ApnsPush
         return $payload;
     }
 
-    public function push($message, $badge = 1, $sound = 'default', $extras = []) {
+    public function push($message, $badge = 1, $sound = 'default', $extras = [])
+    {
         $this->error = array();
         $extras = is_array($extras) ? $extras : [];
         if (is_array($this->deviceToken)) {
@@ -111,7 +124,8 @@ class ApnsPush
         return $this;
     }
 
-    private function _push($message, $badge = 1, $sound = 'default', $extras = []) {
+    private function _push($message, $badge = 1, $sound = 'default', $extras = [])
+    {
         // 创建消息
         $payload = $this->createPayload($message, $badge, $sound, $extras);
         // Build the binary notification
@@ -124,7 +138,8 @@ class ApnsPush
         return $this;
     }
 
-    public function disconnect() {
+    public function disconnect()
+    {
         fclose($this->handle);
         return $this;
     }

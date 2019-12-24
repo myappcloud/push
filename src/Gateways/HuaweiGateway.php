@@ -32,7 +32,7 @@ class HuaweiGateway extends Gateway
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
-        if (isset($options['token'])) {
+        if (! empty($options['token'])) {
             $token = $options['token'];
             unset($options['token']);
         } else {
@@ -57,6 +57,7 @@ class HuaweiGateway extends Gateway
                 ],
                 'ext' => [
                     'badgeAddNum' => $message->badge ? strval($message->badge) : '0',
+                    'biTag' => $message->businessId ?: '',
                 ]
             ]
         ];
