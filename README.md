@@ -381,3 +381,4 @@ print $push->pushNotice(
 ## 注意
 - 各厂商设备token长度不一致，目前识别出华为最长为130个字符
 - 如果项目中使用了`firebase/php-jwt`，需要将此库移除。由于此库不支持ios-token要求的`ES256`算法，故从其PR中拉取出一个新的库`yunchuang/php-jwt`，对应官方的`5.0.0`版本，用法与官方一致
+- ios-token推送要求支持HTTP/2协议，另见 [参照](/docs/ios_token_http_2.md) 
