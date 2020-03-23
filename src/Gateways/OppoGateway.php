@@ -26,6 +26,8 @@ class OppoGateway extends Gateway
 
     const OK_CODE = 0;
 
+    const GATEWAY_NAME = 'oppo';
+
     protected $maxTokens = 1000;
 
     protected $headers = [
@@ -79,6 +81,7 @@ class OppoGateway extends Gateway
                 $messageData['call_back_parameter'] = $message->callbackParam;
             }
         }
+        $messageData = $this->mergeGatewayOptions($messageData, $message->gatewayOptions);
         $to = is_array($to) ? array_unique($to) : [$to];
         if (count($to) > 1) {
             return $this->pushBroadcast($token, $to, $messageData);

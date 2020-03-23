@@ -11,6 +11,8 @@ use MingYuanYun\Push\Support\ApnsPush;
 
 class IosGateway extends Gateway
 {
+    const GATEWAY_NAME = 'ios';
+
     protected $maxTokens = 100;
 
     /**

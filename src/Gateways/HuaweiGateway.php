@@ -23,12 +23,13 @@ class HuaweiGateway extends Gateway
 
     const OK_CODE = '80000000';
 
+    const GATEWAY_NAME = 'huawei';
+
     protected $maxTokens = 100;
 
     protected $headers = [
         'Content-Type' => 'application/x-www-form-urlencoded',
     ];
-
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
@@ -56,11 +57,15 @@ class HuaweiGateway extends Gateway
                     ]
                 ],
                 'ext' => [
-                    'badgeAddNum' => $message->badge ? strval($message->badge) : '0',
                     'biTag' => $message->businessId ?: '',
                 ]
             ]
         ];
+        if ($message->badge) {
+            $payload['hps']['ext']['badgeAddNum'] = strval($message->badge);
+            $payload['hps']['ext']['badgeClass'] = 'com.mysoft.core.activity.LauncherActivity';
+        }
+        $payload = $this->mergeGatewayOptions($payload, $message->gatewayOptions);
         $data = [
             'access_token' => $token,
             'nsp_ts' => $this->getTimestamp(),

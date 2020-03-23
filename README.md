@@ -119,6 +119,21 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 | callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-token通道支持回执* |
 | callbackParam | string | 自定义回执参数，最大50个字节 |
 | notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 |
+| gatewayOptions | array | 厂商扩展参数 |
+
+### gatewayOptions厂商扩展参数说明
+考虑到各厂商均有自己特有的参数，故提供此扩展参数来提供支持。如果扩展参数与通用参数有冲突，则取扩展参数中值。
+参数类型为以厂商通道为键名的数组，格式如下：
+```php
+[
+    "huawei": 与华为消息格式一致，下同,
+    "xiaomi": xxx,
+    "vivo": xxx,
+    "oppo": xxx,
+    "meizu": xxx,
+    "ios-token": xxx
+]
+```
 
 示例
 
@@ -130,7 +145,20 @@ $message = [
     'extra' => [
         'key1' => 'v1',
         'key2' => 2
-    ]
+    ],
+    'gatewayOptions' => [
+        'xiaomi' => [
+            'extra.notify_foreground' => '1',
+        ],
+        'huawei' => [
+            'hps' => [
+                'ext' => [
+                    'badgeAddNum' => '1',
+                    'badgeClass' => 'com.mysoft.core.activity.LauncherActivity',
+                ]
+            ]
+        ]
+    ],
 ];
 ```
 
@@ -383,4 +411,3 @@ print $push->pushNotice(
 - 如果项目中使用了`firebase/php-jwt`，需要将此库移除。由于此库不支持ios-token要求的`ES256`算法，故从其PR中拉取出一个新的库`yunchuang/php-jwt`，对应官方的`5.0.0`版本，用法与官方一致
 - ios-token推送要求支持HTTP/2协议，另见 [参照](/docs/ios_token_http_2.md)
 - [iOS两种推送形式比较](/docs/ios_push_compare.md)
- 

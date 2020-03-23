@@ -18,6 +18,8 @@ class MeizuGateway extends Gateway
 
     const OK_CODE = '200';
 
+    const GATEWAY_NAME = 'meizu';
+
     protected $headers = [
         'Content-Type' => 'application/x-www-form-urlencoded',
     ];
@@ -50,6 +52,7 @@ class MeizuGateway extends Gateway
                 $payload['extra']['callback.param'] = $message->callbackParam;
             }
         }
+        $payload = $this->mergeGatewayOptions($payload, $message->gatewayOptions);
         $data = [
             'appId' => $this->config->get('appId'),
             'pushIds' => $this->formatTo($to),

@@ -26,6 +26,8 @@ class VivoGateway extends Gateway
 
     const OK_CODE = 0;
 
+    const GATEWAY_NAME = 'vivo';
+
     protected $maxTokens = 1000;
 
     protected $headers = [
@@ -94,6 +96,7 @@ class VivoGateway extends Gateway
                 $data['extra']['callback.param'] = $message->callbackParam;
             }
         }
+        $data = $this->mergeGatewayOptions($data, $message->gatewayOptions);
         $result = $this->postJson(
             sprintf('%s/%s', self::BASE_URL, self::SINGLE_PUSH_METHOD),
             $data,
@@ -139,6 +142,7 @@ class VivoGateway extends Gateway
                 $data['extra']['callback.param'] = $message->callbackParam;
             }
         }
+        $data = $this->mergeGatewayOptions($data, $message->gatewayOptions);
         $result = $this->postJson(
             sprintf('%s/%s', self::BASE_URL, self::SAVE_MESSAGE_METHOD),
             $data,

@@ -16,6 +16,8 @@ class XiaomiGateway extends Gateway
 
     const OK_CODE = 0;
 
+    const GATEWAY_NAME = 'xiaomi';
+
     protected $maxTokens = 100;
 
 
@@ -46,6 +48,7 @@ class XiaomiGateway extends Gateway
                 $data['extra.callback.param'] = $message->callbackParam;
             }
         }
+        $data = $this->mergeGatewayOptions($data, $message->gatewayOptions);
 
         $result = $this->post(self::PUSH_URL, $data, $this->getHeaders());
         $this->assertFailure($result, '小米推送失败');

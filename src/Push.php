@@ -34,6 +34,11 @@ class Push
         $this->gateway = $this->createGateway($gateway);
     }
 
+    public function getPusher()
+    {
+        return $this->gateway->getGatewayName();
+    }
+
     public function getAuthToken()
     {
         return $this->gateway->getAuthToken();

@@ -3,14 +3,17 @@
 
 namespace MingYuanYun\Push\Gateways;
 
-
 use MingYuanYun\Push\Contracts\GatewayInterface;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
 use MingYuanYun\Push\Support\Config;
+use MingYuanYun\Push\Support\ArrayHelper;
+
 
 abstract class Gateway implements GatewayInterface
 {
     const DEFAULT_TIMEOUT = 5.0;
+
+    const GATEWAY_NAME = 'default';
 
     protected $config;
 
@@ -81,6 +84,21 @@ abstract class Gateway implements GatewayInterface
     public function getName()
     {
         return \strtolower(str_replace([__NAMESPACE__.'\\', 'Gateway'], '', \get_class($this)));
+    }
+
+    public function getGatewayName()
+    {
+        return static::GATEWAY_NAME;
+    }
+
+    protected function mergeGatewayOptions($payload, $gatewayOptions)
+    {
+        $gatewayName = $this->getGatewayName();
+        if (! $gatewayOptions || ! is_array($gatewayOptions) || ! array_key_exists($gatewayName, $gatewayOptions)) {
+            return $payload;
+        }
+
+        return ArrayHelper::merge($payload, $gatewayOptions[$gatewayName]);
     }
 
     public function generateIntent($appPkgName, $extra)

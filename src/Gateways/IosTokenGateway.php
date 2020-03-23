@@ -16,6 +16,8 @@ class IosTokenGateway extends Gateway
 
     const ALGORITHM = 'ES256';
 
+    const GATEWAY_NAME = 'ios-token';
+
     protected $maxTokens = 100;
 
     public function getAuthToken()
@@ -98,6 +100,7 @@ class IosTokenGateway extends Gateway
         if ($message->extra && is_array($message->extra)) {
             $payload = array_merge($payload, $message->extra);
         }
+        $payload = $this->mergeGatewayOptions($payload, $message->gatewayOptions);
         return json_encode($payload);
     }
 
