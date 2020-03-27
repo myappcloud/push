@@ -23,7 +23,9 @@
 
 ## 安装
 
-执行`composer require yunchuang/push`完成安装
+```
+composer require yunchuang/push
+```
 
 
 ---
@@ -66,7 +68,7 @@ $config = [
         'appSecret' => ''
     ],
     'ios' => [
-        'isSandBox' => true, // 是否沙盒环境（测试包）
+        'isSandBox' => true, // 是否调试包
         'certPath' => '', // pem格式推送证书本地绝对路径
         'password' => '123', // 推送证书密码
     ],
@@ -112,14 +114,14 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 |参数|类型|说明
 |:---:|:---:|:---:|
 | businessId | string | 业务ID，相同业务ID只推送一次 |
-| title | string | 标题，建议不超过10个汉字 |
-| subTitle | string | 副标题，建议不超过10个汉字 |
-| content | string | 内容，建议不超过20个汉字 |
-| extra | array | 自定义数据，只支持一维 |
-| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果仅ios-token通道支持回执* |
-| callbackParam | string | 自定义回执参数，最大50个字节 |
-| notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 |
-| gatewayOptions | array | 厂商扩展参数 |
+| title | string | 标题 |
+| subTitle | string | 副标题 |
+| content | string | 内容 |
+| badge | string | 角标，仅华为、ios、ios-token通道支持 |
+| extra | array | 服务端传给APP的自定义数据，只支持一维数组 |
+| callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果ios-token通道由SDK调用回执* |
+| callbackParam | string | 自定义回执参数 |
+| notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 || gatewayOptions | array | 厂商扩展参数 |
 
 ### gatewayOptions厂商扩展参数说明
 考虑到各厂商均有自己特有的参数，故提供此扩展参数来提供支持。如果扩展参数与通用参数有冲突，则取扩展参数中值。
@@ -167,9 +169,23 @@ $message = [
 |参数|类型|说明
 |:---:|:---:|:---:|
 | token | string | 认证token |
-| push | MingYuanYun\Push\Support\ApnsPush | iOS证书推送实例 |
+| push | MingYuanYun\Push\Support\ApnsPush | iOS证书推送实例，考虑到文件I/O问题，故此设计 |
 
-当前仅支持附加认证token
+
+## 标题等长度限制说明
+> 当前库将根据以下厂商限制进行处理，请调用方根据实际情况设置标题等内容
+
+| 厂商 | 标题 | 副标题 | 描述 | 回执地址 | 回执参数 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 华为 | 未说明 | - | 未说明 | - | - |
+| 小米 | 未说明 | - | 未说明 | 未说明 | 64 |
+| OPPO | 50 | 10 | 200 | 200 | 50|
+| VIVO | 20 | - | 50 | 128 | 64 |
+| 魅族 | 32 | - | 100 | 128 | 64 |
+| 苹果 | 未说明 | 未说明 | 未说明 | - | - |
+
+
+---
 
 ## 推送
 ```php
@@ -325,6 +341,7 @@ print $push->pushNotice(
 ---
 
 ## 各通道回执示例
+> 建议判断如果是字符串，则进行json_decode
 
 - ios-token
 ```

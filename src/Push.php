@@ -65,7 +65,7 @@ class Push
             if (!is_array($message)) {
                 throw new InvalidArgumentException('无效的推送内容格式');
             }
-            $message = new Message($message);
+            $message = new Message($message, $this->gateway->getGatewayName());
         }
         return $message;
     }
