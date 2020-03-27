@@ -121,7 +121,8 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 | extra | array | 服务端传给APP的自定义数据，只支持一维数组 |
 | callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果ios-token通道由SDK调用回执* |
 | callbackParam | string | 自定义回执参数 |
-| notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 || gatewayOptions | array | 厂商扩展参数 |
+| notifyId | string | 聚合标签，同标签消息在通知栏只显示一条。小米通道支持，字母、数字组合不超过8位 |
+| gatewayOptions | array | 厂商扩展参数 |
 
 ### gatewayOptions厂商扩展参数说明
 考虑到各厂商均有自己特有的参数，故提供此扩展参数来提供支持。如果扩展参数与通用参数有冲突，则取扩展参数中值。
