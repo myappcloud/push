@@ -70,7 +70,7 @@ class IosGateway extends Gateway
                 'apns-collapse-id' => $message->businessId
             ];
             $this->pusher->setDeviceToken($to)
-                ->push($messageData, $message->badge, 'default', $message->extra);
+                ->push($messageData, intval($message->badge), 'default', $message->extra);
             return;
         }
         $error = $this->pusher->error();

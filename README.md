@@ -5,6 +5,7 @@
 ## 平台支持
 
 - [华为推送](https://developer.huawei.com/consumer/cn/service/hms/catalog/huaweipush_agent.html?page=hmssdk_huaweipush_api_reference_agent_s2)
+- [华为新版推送](https://developer.huawei.com/consumer/cn/doc/development/HMS-References/push-sendapi)
 - [小米推送](https://dev.mi.com/console/doc/detail?pId=1163)
 - [魅族推送](https://github.com/MEIZUPUSH/PushAPI#api_standard_index)
 - [Oppo推送](https://storepic.oppomobile.com/openplat/resource/201910/18/OPPO推送平台服务端API-V1.9.3.pdf)
@@ -44,6 +45,10 @@ EOF;
 $config = [
     'huawei' => [
         'appPkgName' => '', // 包名
+        'clientId' => '',
+        'clientSecret' => ''
+    ],
+    'huawei-v2' => [
         'clientId' => '',
         'clientSecret' => ''
     ],
@@ -93,6 +98,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 目前支持以下通道：
 
 - huawei 华为
+- huawei-v2 华为新版
 - xiaomi 小米
 - meizu 魅族
 - oppo Oppo
@@ -117,7 +123,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 | title | string | 标题 |
 | subTitle | string | 副标题 |
 | content | string | 内容 |
-| badge | string | 角标，仅华为、ios、ios-token通道支持 |
+| badge | string | 角标，仅华为、华为新版、ios、ios-token通道支持 |
 | extra | array | 服务端传给APP的自定义数据，只支持一维数组 |
 | callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果ios-token通道由SDK调用回执* |
 | callbackParam | string | 自定义回执参数 |
@@ -275,7 +281,7 @@ print $push->pushNotice(
 
 ## 认证
 
-目前`华为`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token，过期时间较返回的有效时间短，比如2小时。
+目前`华为`、`华为新版`、`Oppo`、`Vivo`、`ios-token`推送前需要获取先获取认证token，且对获取频次均有限制，故统一提供了获取token方法`getAuthToken`，建议缓存认证token，过期时间较返回的有效时间短，比如2小时。
 
 此方法返回格式如下：
 
@@ -293,7 +299,9 @@ print $push->pushNotice(
 
 ## 推送角标
 
-目前仅`ios` `ios-token` `华为`支持推送角标
+目前仅`ios` `ios-token` `华为` `华为新版`支持推送角标
+
+其中`华为新版`支持角标累加，`badge`格式为`+ 5`
 
 
 ## 返回值

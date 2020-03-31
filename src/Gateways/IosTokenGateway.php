@@ -93,8 +93,7 @@ class IosTokenGateway extends Gateway
                     'body' => $message->content,
                     'apns-collapse-id' => $message->businessId
                 ],
-                'badge' => $message->badge ? $message->badge : 0,
-                'sound' => $message->sound ? $message->sound : 'default',
+                'badge' => $message->badge ? intval($message->badge) : 0,
             ],
         ];
         if ($message->extra && is_array($message->extra)) {

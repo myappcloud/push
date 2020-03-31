@@ -10,7 +10,7 @@ use MingYuanYun\Push\Support\ArrayHelper;
 class Message extends AbstractMessage
 {
     /**
-     * property limit for each gateway
+     * property limit for each channel
      *
      * @var array
      */
@@ -100,6 +100,8 @@ class Message extends AbstractMessage
                     return '';
                 }
                 return $value;
+            case 'badge':
+                return $this->checkBadge($gatewayName, $value);
             case 'extra':
             case 'gatewayOptions':
                 if (! is_array($value)) {
@@ -109,5 +111,18 @@ class Message extends AbstractMessage
             default:
                 return $value;
         }
+    }
+
+    private function checkBadge($gatewayName, $badge)
+    {
+        if (! $badge) {
+            return $badge;
+        }
+        if ($gatewayName != 'huawei-v2') {
+            if (preg_match('/(\d+)/', $badge, $match)) {
+                return $match[0];
+            }
+        }
+        return $badge;
     }
 }
