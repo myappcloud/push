@@ -76,10 +76,9 @@ class HuaweiGateway extends Gateway
         $result = $this->post($this->buildPushUrl(), $data, $this->getHeaders());
         if (!isset($result['code']) || $result['code'] != self::OK_CODE) {
             throw new GatewayErrorException(sprintf(
-                '华为推送失败 > [%s] %s %s',
+                '华为推送失败 > [%s] %s',
                 isset($result['code']) ? $result['code'] : '-99',
-                isset($result['error']) ? $result['error'] : '',
-                isset($result['error_description']) ? $result['error_description'] : '未知异常'
+                json_encode($result, JSON_UNESCAPED_UNICODE)
             ));
         }
         return $result['requestId'];

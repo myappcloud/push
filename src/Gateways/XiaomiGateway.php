@@ -71,11 +71,10 @@ class XiaomiGateway extends Gateway
     {
         if (!isset($result['code']) || $result['code'] != self::OK_CODE) {
             throw new GatewayErrorException(sprintf(
-                '%s > [%s] %s %s',
+                '%s > [%s] %s',
                 $message,
-                isset($result['code']) ? $result['code'] : '-1',
-                isset($result['description']) ? $result['description'] : '未知异常',
-                isset($result['reason']) ? $result['reason'] : ''
+                isset($result['code']) ? $result['code'] : '-99',
+                json_encode($result, JSON_UNESCAPED_UNICODE)
             ));
         }
     }

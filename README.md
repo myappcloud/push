@@ -123,7 +123,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 | title | string | 标题 |
 | subTitle | string | 副标题 |
 | content | string | 内容 |
-| badge | string | 角标，仅华为、华为新版、ios、ios-token通道支持 |
+| badge | string | 角标 |
 | extra | array | 服务端传给APP的自定义数据，只支持一维数组 |
 | callback | string | 送达回执地址，供推送厂商调用，最大128个字节，具体请查阅各厂商文档。*华为仅支持在应用管理中心配置；魅族需在管理后台注册回执地址，每次推送时也需指定回执地址；苹果ios-token通道由SDK调用回执* |
 | callbackParam | string | 自定义回执参数 |
@@ -191,6 +191,9 @@ $message = [
 | 魅族 | 32 | - | 100 | 128 | 64 |
 | 苹果 | 未说明 | 未说明 | 未说明 | - | - |
 
+
+## 角标说明
+目前仅华为、华为新版、ios、ios-token通道支持角标。其中华为新版支持角标累加，格式为`+1`，其他通道将只取数字值。
 
 ---
 

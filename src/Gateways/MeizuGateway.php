@@ -90,7 +90,7 @@ class MeizuGateway extends Gateway
                 '%s > [%s] %s',
                 $message,
                 isset($result['code']) ? $result['code'] : '-99',
-                isset($result['message']) ? $result['message'] : '未知异常'
+                json_encode($result, JSON_UNESCAPED_UNICODE)
             ));
         }
     }

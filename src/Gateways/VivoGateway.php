@@ -186,7 +186,7 @@ class VivoGateway extends Gateway
                 '%s > [%s] %s',
                 $message,
                 isset($result['result']) ? $result['result'] : '-99',
-                isset($result['desc']) ? $result['desc'] : '未知异常'
+                json_encode($result, JSON_UNESCAPED_UNICODE)
             ));
         }
     }
