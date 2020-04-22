@@ -8,6 +8,7 @@ use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
 use MingYuanYun\Push\Support\ApnsPush;
+use MingYuanYun\Push\Support\ArrayHelper;
 
 class IosGateway extends Gateway
 {
@@ -64,19 +65,44 @@ class IosGateway extends Gateway
         if ($this->pusher->isSuccess()) {
             // http://docs.getui.com/getui/server/rest/template/
             // https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
-            $messageData = [
-                'title' => $message->title,
-                'body' => $message->content,
-                'apns-collapse-id' => $message->businessId
-            ];
+
+            $messageData = $this->createPayload($message);
             $this->pusher->setDeviceToken($to)
-                ->push($messageData, intval($message->badge), 'default', $message->extra);
+                ->push($messageData);
             return;
         }
         $error = $this->pusher->error();
         if ($error) {
             throw new GatewayErrorException($error);
         }
+    }
+
+    private function createPayload(AbstractMessage $message)
+    {
+        $messageData = [
+            'aps' => [
+                'alert' => [
+                    'title' => $message->title,
+                    'body' => $message->content,
+                    'subtitle' => $message->subTitle,
+                    'apns-collapse-id' => $message->businessId
+                ],
+                'sound' => 'default',
+            ]
+        ];
+        if (! empty($message->badge)) {
+            $messageData['aps']['badge'] = intval($message->badge);
+        }
+        if (! empty($message->extra)) {
+            $messageData = ArrayHelper::merge($messageData, $message->extra);
+        }
+        if (! empty($message->notifyId)) {
+            $messageData['aps']['thread-id'] = $message->notifyId;
+        }
+        $iosGatewayOption = is_array($message->gatewayOptions) ?
+            ArrayHelper::getValue($message->gatewayOptions, 'ios') : [];
+        return empty($iosGatewayOption) ?
+            $messageData : ArrayHelper::merge($messageData, $iosGatewayOption);
     }
 
     public function __destruct()

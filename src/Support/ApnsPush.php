@@ -93,43 +93,26 @@ class ApnsPush
         return implode(PHP_EOL, $this->error);
     }
 
-    private function createPayload($message, $badge, $sound, $extras = [])
-    {
-        $body['aps'] = array(
-            'alert' => $message,
-            'sound' => $sound,
-            'badge' => $badge
-        );
-        unset($extras['aps']);
-        $body = array_merge($body, $extras);
-
-        $payload = json_encode($body);
-
-        return $payload;
-    }
-
-    public function push($message, $badge = 1, $sound = 'default', $extras = [])
+    public function push($message)
     {
         $this->error = array();
-        $extras = is_array($extras) ? $extras : [];
+        $message = json_encode($message);
         if (is_array($this->deviceToken)) {
             $tokens = $this->deviceToken;
             foreach ($tokens as $token) {
                 $this->setDeviceToken($token)
-                    ->_push($message, $badge, $sound, $extras);
+                    ->_push($message);
             }
         } else {
-            $this->_push($message, $badge, $sound, $extras);
+            $this->_push($message);
         }
         return $this;
     }
 
-    private function _push($message, $badge = 1, $sound = 'default', $extras = [])
+    private function _push($message)
     {
-        // 创建消息
-        $payload = $this->createPayload($message, $badge, $sound, $extras);
         // Build the binary notification
-        $msg = chr(0) . pack('n', 32) . pack('H*', $this->deviceToken) . pack('n', strlen($payload)) . $payload;
+        $msg = chr(0) . pack('n', 32) . pack('H*', $this->deviceToken) . pack('n', strlen($message)) . $message;
         // Send it to the server
         $result = fwrite($this->handle, $msg, strlen($msg));
         if (!$result) {
