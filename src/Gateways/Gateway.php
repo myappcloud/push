@@ -117,6 +117,7 @@ abstract class Gateway implements GatewayInterface
     {
         $extraStr = '';
         foreach ($extra as $key => $value) {
+            $value = urlencode($value);
             $extraStr .= "{$slash}{$key}={$value}";
         }
         return ltrim($extraStr, $slash);
