@@ -49,6 +49,7 @@ $config = [
         'clientSecret' => ''
     ],
     'huawei-v2' => [
+        'appPkgName' => '',
         'clientId' => '',
         'clientSecret' => ''
     ],

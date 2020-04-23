@@ -5,7 +5,7 @@ namespace MingYuanYun\Push\Support;
 
 class ArrayHelper
 {
-    // from https://github.com/yiichina/yii2/blob/api/framework/helpers/BaseArrayHelper.php
+    // from https://github.com/yiisoft/yii2/blob/2.0.34/framework/helpers/BaseArrayHelper.php
 
 
     /**
