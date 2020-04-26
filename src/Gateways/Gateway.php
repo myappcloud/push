@@ -109,7 +109,7 @@ abstract class Gateway implements GatewayInterface
         return sprintf(
             'mic_scheme://%s/push?%s#Intent;launchFlags=0x24000000;end',
             $appPkgName,
-            $this->buildQuery($extra)
+            urlencode($this->buildQuery($extra))
         );
     }
 
@@ -117,7 +117,6 @@ abstract class Gateway implements GatewayInterface
     {
         $extraStr = '';
         foreach ($extra as $key => $value) {
-            $value = urlencode($value);
             $extraStr .= "{$slash}{$key}={$value}";
         }
         return ltrim($extraStr, $slash);
