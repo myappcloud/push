@@ -107,7 +107,7 @@ class IosGateway extends Gateway
 
     public function __destruct()
     {
-        $this->pusher && $this->pusher->disconnect();
+        $this->pusher && $this->getGatewayName() == static::GATEWAY_NAME && $this->pusher->disconnect();
     }
 
     protected function formatTo($to)

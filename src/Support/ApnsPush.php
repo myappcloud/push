@@ -123,7 +123,7 @@ class ApnsPush
 
     public function disconnect()
     {
-        fclose($this->handle);
+        $this->handle && fclose($this->handle);
         return $this;
     }
 }
