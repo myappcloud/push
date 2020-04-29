@@ -109,7 +109,7 @@ abstract class Gateway implements GatewayInterface
         return sprintf(
             'mic_scheme://%s/push?%s#Intent;launchFlags=0x24000000;end',
             $appPkgName,
-            urlencode($this->buildQuery($extra))
+            json_encode($extra)
         );
     }
 
