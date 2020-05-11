@@ -87,7 +87,6 @@ class IosGateway extends Gateway
                     'subtitle' => $message->subTitle,
                     'apns-collapse-id' => $message->businessId
                 ],
-                'sound' => 'default',
             ]
         ];
         if (! empty($message->badge)) {

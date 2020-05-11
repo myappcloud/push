@@ -107,7 +107,7 @@ abstract class Gateway implements GatewayInterface
             $extra = [];
         }
         return sprintf(
-            'mic_scheme://%s/push?%s#Intent;launchFlags=0x24000000;end',
+            'mic_scheme://%s/push?$%s$#Intent;launchFlags=0x24000000;end',
             $appPkgName,
             json_encode($extra)
         );

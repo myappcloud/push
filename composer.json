@@ -10,7 +10,7 @@
             "email": "zengb02@mingyuanyun.com"
         }
     ],
-    "version": "1.1.7",
+    "version": "1.1.8",
     "require": {
         "guzzlehttp/guzzle": ">=6.0.0",
         "php": ">=5.4",
