@@ -9,6 +9,7 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use MingYuanYun\Push\AbstractMessage;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
+use MingYuanYun\Push\Support\ArrayHelper;
 
 class IosTokenGateway extends Gateway
 {
@@ -69,7 +70,9 @@ class IosTokenGateway extends Gateway
         $header = [
             'authorization' => sprintf('bearer %s', $token),
             'apns-topic' => $this->config->get('bundleId'),
-            'content-type' => 'application/json'
+            'content-type' => 'application/json',
+            'apns-id' => $message->businessId,
+            'apns-collapse-id' => $message->notifyId,
         ];
         $payload = $this->createPayload($message);
 
@@ -91,8 +94,8 @@ class IosTokenGateway extends Gateway
                     'title' => $message->title,
                     'subtitle' => $message->subTitle ? $message->subTitle : '',
                     'body' => $message->content,
-                    'apns-collapse-id' => $message->businessId
                 ],
+                'sound' => 'default',
                 'badge' => $message->badge ? intval($message->badge) : 0,
             ],
         ];
@@ -100,6 +103,9 @@ class IosTokenGateway extends Gateway
             $payload = array_merge($payload, $message->extra);
         }
         $payload = $this->mergeGatewayOptions($payload, $message->gatewayOptions);
+        if (ArrayHelper::getValue($payload, 'aps.mutable-content') == 1) {
+            unset($payload['aps']['sound']);
+        }
         return json_encode($payload);
     }
 

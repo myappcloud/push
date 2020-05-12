@@ -85,8 +85,8 @@ class IosGateway extends Gateway
                     'title' => $message->title,
                     'body' => $message->content,
                     'subtitle' => $message->subTitle,
-                    'apns-collapse-id' => $message->businessId
                 ],
+                'sound' => 'default',
             ]
         ];
         if (! empty($message->badge)) {
@@ -95,13 +95,14 @@ class IosGateway extends Gateway
         if (! empty($message->extra)) {
             $messageData = ArrayHelper::merge($messageData, $message->extra);
         }
-        if (! empty($message->notifyId)) {
-            $messageData['aps']['thread-id'] = $message->notifyId;
-        }
         $iosGatewayOption = is_array($message->gatewayOptions) ?
             ArrayHelper::getValue($message->gatewayOptions, 'ios') : [];
-        return empty($iosGatewayOption) ?
+        $messageData = empty($iosGatewayOption) ?
             $messageData : ArrayHelper::merge($messageData, $iosGatewayOption);
+        if (ArrayHelper::getValue($messageData, 'aps.mutable-content') == 1) {
+            unset($messageData['aps']['sound']);
+        }
+        return $messageData;
     }
 
     public function __destruct()
