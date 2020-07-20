@@ -82,19 +82,19 @@ class Message extends AbstractMessage
         $limit = ArrayHelper::getValue($this->propertyLimit, "{$name}.{$gatewayName}");
         switch ($name) {
             case 'title':
-                return $limit ? mb_substr($value, 0, $limit) : $value;
+                return $limit ? mb_substr($value, 0, $limit, 'utf-8') : $value;
             case 'subTitle':
-                return $value ? ($limit ? mb_substr($value, 0, $limit) : $value) : '';
+                return $value ? ($limit ? mb_substr($value, 0, $limit, 'utf-8') : $value) : '';
             case 'content':
-                $value = $value ? ($limit ? mb_substr($value, 0, $limit) : $value) : '';
+                $value = $value ? ($limit ? mb_substr($value, 0, $limit, 'utf-8') : $value) : '';
                 if ($value && $value == $this->subTitle) {
                     return '';
                 }
                 return $value;
             case 'callback':
-                return $value ? ($limit ? mb_substr($value, 0, $limit) : $value) : '';
+                return $value ? ($limit ? mb_substr($value, 0, $limit, 'utf-8') : $value) : '';
             case 'callbackParam':
-                return $value ? ($limit ? mb_substr($value, 0, $limit) : $value) : '';
+                return $value ? ($limit ? mb_substr($value, 0, $limit, 'utf-8') : $value) : '';
             case 'notifyId':
                 if (! preg_match('/^[0-9a-zA-Z_\-]{1,8}$/', $value)) {
                     return '';
