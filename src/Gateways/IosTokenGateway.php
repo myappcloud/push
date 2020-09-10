@@ -71,9 +71,9 @@ class IosTokenGateway extends Gateway
             'authorization' => sprintf('bearer %s', $token),
             'apns-topic' => $this->config->get('bundleId'),
             'content-type' => 'application/json',
-            'apns-id' => $message->businessId,
-            'apns-collapse-id' => $message->notifyId,
         ];
+        !is_null($message->businessId) && $header['apns-id'] = $message->businessId;
+        !is_null($message->notifyId) && $header['apns-collapse-id'] = $message->notifyId;
         $payload = $this->createPayload($message);
 
         $callback = [];

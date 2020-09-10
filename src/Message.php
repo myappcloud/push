@@ -100,6 +100,11 @@ class Message extends AbstractMessage
                     return '';
                 }
                 return $value;
+            case 'businessId':
+                if (! preg_match('/^\w{8}(-\w{4}){3}-\w{12}$/', $value)) {
+                    return '';
+                }
+                return $value;
             case 'badge':
                 return $this->checkBadge($gatewayName, $value);
             case 'extra':
