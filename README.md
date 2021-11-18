@@ -438,3 +438,4 @@ print $push->pushNotice(
 - 如果项目中使用了`firebase/php-jwt`，需要将此库移除。由于此库不支持ios-token要求的`ES256`算法，故从其PR中拉取出一个新的库`yunchuang/php-jwt`，对应官方的`5.0.0`版本，用法与官方一致
 - ios-token推送要求支持HTTP/2协议，另见 [参照](/docs/ios_token_http_2.md)
 - [iOS两种推送形式比较](/docs/ios_push_compare.md)
+- 对于非明源云移动应用，若有`extra`参数的使用场景，请与原生开发人员确认**Intent对应的schema**信息，具体代码为`src/Gateways/Gateway.php L110`
