@@ -13,7 +13,8 @@
     "require": {
         "guzzlehttp/guzzle": ">=6.0.0",
         "php": ">=5.4",
-        "yunchuang/php-jwt": "^1.0"
+        "yunchuang/php-jwt": "^1.0",
+        "gepo/apns-http2": "^0.1.0"
     },
     "autoload": {
         "psr-4": {

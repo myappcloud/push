@@ -118,6 +118,11 @@ class Push
 
     protected function checkOptions(array $options)
     {
-        return array_map('trim', $options);
+        return array_map(function ($option) {
+            if (is_string($option)) {
+                return trim($option);
+            }
+            return $option;
+        }, $options);
     }
 }

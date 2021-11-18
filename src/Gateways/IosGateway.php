@@ -4,10 +4,13 @@
 namespace MingYuanYun\Push\Gateways;
 
 
+use Apns\Client;
+use Apns\Exception\ApnsException;
+use Apns\Message;
 use MingYuanYun\Push\AbstractMessage;
+use MingYuanYun\Push\ApnsMessage;
 use MingYuanYun\Push\Exceptions\GatewayErrorException;
 use MingYuanYun\Push\Exceptions\InvalidArgumentException;
-use MingYuanYun\Push\Support\ApnsPush;
 use MingYuanYun\Push\Support\ArrayHelper;
 
 class IosGateway extends Gateway
@@ -17,63 +20,77 @@ class IosGateway extends Gateway
     protected $maxTokens = 100;
 
     /**
-     * @var ApnsPush $pusher
+     * @var Client $pusher
      */
-    protected $pusher = null;
+    private $pusher = null;
+
+    private $bundleId;
 
     public function getAuthToken()
     {
         return null;
     }
 
-    public function setPusher(ApnsPush $pusher)
+    public function setPusher(Client $pusher)
     {
         $this->pusher = $pusher;
     }
 
     private function checkPusher()
     {
-        if (! isset($this->pusher)) {
-            $this->pusher = new ApnsPush();
+        if (!isset($this->pusher)) {
             $isSandBox = $this->config->get('isSandBox');
             $certPath = $this->config->get('certPath');
             if (!file_exists($certPath)) {
                 throw new InvalidArgumentException('无效的推送证书地址 > ' . $certPath);
             }
+            $password = $this->config->get('password');
 
-            $this->pusher->setIsSandBox($isSandBox)
-                ->setLocalCert($certPath);
-            if ($password = $this->config->get('password')) {
-                $this->pusher->setPassphrase($password);
-            }
+            $this->pusher = new Client(
+                [$certPath, $password],
+                $isSandBox
+            );
         }
+    }
+    
+    private function parseBundleId()
+    {
+        $cert = openssl_x509_parse(file_get_contents($this->pusher->getSslCert()[0]));
+        if (!$cert) {
+            throw new InvalidArgumentException('证书解析失败');
+        }
+        $this->bundleId = $cert['subject']['UID'];
     }
 
     public function pushNotice($to, AbstractMessage $message, array $options = [])
     {
-        $to = $this->formatTo($to);
-        if (!$to) {
+        $tokens = $this->formatTo($to);
+        if (!$tokens) {
             throw new InvalidArgumentException('无有效的设备token');
         }
-        if (! empty($options['push']) && $options['push'] instanceof ApnsPush) {
+        if (!empty($options['push']) && $options['push'] instanceof Client) {
             $this->setPusher($options['push']);
         }
-
         $this->checkPusher();
-        $this->pusher->connect();
+        $this->parseBundleId();
 
-        if ($this->pusher->isSuccess()) {
-            // http://docs.getui.com/getui/server/rest/template/
-            // https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/PayloadKeyReference.html
+        $payload = $this->createPayload($message);
+        $messageEntity = new ApnsMessage();
+        $messageEntity->setMessageEntity($payload);
+        $messageEntity->setTopic($this->bundleId);
 
-            $messageData = $this->createPayload($message);
-            $this->pusher->setDeviceToken($to)
-                ->push($messageData);
-            return;
+        $result = [];
+        foreach ($tokens as $token) {
+            $msg = clone $messageEntity;
+            $msg->setDeviceIdentifier($token);
+            try {
+                $this->pusher->send($msg);
+            } catch (ApnsException $e) {
+                $result[$token] = $e->getMessage();
+            }
         }
-        $error = $this->pusher->error();
-        if ($error) {
-            throw new GatewayErrorException($error);
+        if ($result) {
+            throw new GatewayErrorException(json_encode($result));
         }
     }
 
@@ -107,7 +124,7 @@ class IosGateway extends Gateway
 
     public function __destruct()
     {
-        $this->pusher && $this->getGatewayName() == static::GATEWAY_NAME && $this->pusher->disconnect();
+        $this->pusher && $this->getGatewayName() == static::GATEWAY_NAME && $this->pusher = null;
     }
 
     protected function formatTo($to)
@@ -116,7 +133,7 @@ class IosGateway extends Gateway
             $to = [$to];
         }
         return array_filter($to, function ($item) {
-            return ctype_xdigit($item);
+            return ctype_xdigit($item) && strlen($item) == 64;
         });
     }
 }

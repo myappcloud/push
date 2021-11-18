@@ -177,7 +177,7 @@ $message = [
 |参数|类型|说明
 |:---:|:---:|:---:|
 | token | string | 认证token |
-| push | MingYuanYun\Push\Support\ApnsPush | iOS证书推送实例，考虑到文件I/O问题，故此设计 |
+| push | Apns\Client | iOS证书推送实例，考虑到文件I/O问题，故此设计 |
 
 
 ## 标题等长度限制说明
@@ -251,13 +251,10 @@ print $push->pushNotice(
 // 苹果基于证书推送
 $push->setPusher('ios');
 
-$apnsPush = new ApnsPush();
 $isSandBox = true;
 $certPath = '/cert/path';
 $password = 'cert_pwd';
-$apnsPush->setIsSandBox($isSandBox)
-    ->setLocalCert($certPath)
-    ->setPassphrase($password);
+$apnsPush = new \Apns\Client([$certPath, $password], $isSandBox);
 $options = [
     'push' => $apnsPush
 ];
