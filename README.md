@@ -12,6 +12,7 @@
 - [Vivo推送](https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20191210/we5XL6/PUSH-UPS-API接口文档%20-%202.7.0版.pdf)
 - [iOS APNs推送](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/APNSOverview.html#//apple_ref/doc/uid/TP40008194-CH8-SW1)
 - [iOS APNs(base on token)推送](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns)
+- [极光推送（仅支持安卓，iOS 建议走苹果推送通道）](https://docs.jiguang.cn/jpush/server/push/rest_api_v3_push)
 
 
 ---
@@ -85,6 +86,11 @@ $config = [
         'secretContent' => $iosCertContent, // 密钥内容，有值时忽略secretFile
         'secretFile' => 'xxx.p8', // token认证密钥文件本地绝对路径
         'bundleId' => 'com.mysoft.mdev' // 应用ID
+    ],
+    'jiguang' => [
+        'appPkgName' => '',
+        'appKey' => '',
+        'masterSecret' => ''
     ]
 ];
 
@@ -106,6 +112,7 @@ $push->pushNotice(设备token, 推送内容, 附加信息);
 - vivo Vivo
 - ios 苹果(基于推送证书认证)
 - ios-token 苹果(基于token认证)
+- jiguang 极光
 
 ## 设备token
 
@@ -274,6 +281,15 @@ print $push->pushNotice(
     [
         '7438f5ba512cba4dcd1613e530a960cb862bd1c7ca70eae3cfe73137583c3c0d',
         '720772a4df1938b14d2b732ee62ce4e157577f8453d6021f81156aaeca7032ae',
+    ],
+    $message
+);
+
+//极光推送
+$push->setPusher('jiguang');
+print $push->pushNotice(
+    [
+        '160a3797c912f272068',
     ],
     $message
 );
