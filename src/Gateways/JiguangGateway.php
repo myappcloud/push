@@ -42,7 +42,7 @@ class JiguangGateway extends Gateway
             ]
         ];
         if ($message->badge) {
-            $androidConfig['android']['badge_set_num'] = $message->badge;
+            $androidConfig['android']['badge_set_num'] = (int)$message->badge;
         }
         $data = [
             'platform' => ['android'],
